@@ -23,6 +23,14 @@ st.markdown("""
     div[data-testid="stExpander"] div[data-testid="stMarkdownContainer"] p {
         font-size: 0.93rem;
     }
+
+    div[data-testid = "stColumn"]{
+        border: 2px solid #444 !important;
+        border-radius: 10px !important;
+        padding: 15px !important;
+        box-sizing: border-box !important;  /* prevents overflow */  
+    }
+
     /* Custom field card for personal info */
     .field-card {
         margin-bottom: 12px;
