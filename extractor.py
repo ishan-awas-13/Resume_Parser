@@ -43,21 +43,4 @@ def get_clean_resume_text(file_input) -> str:
     clean_lines = [line.strip() for line in raw_text.splitlines() if line.strip()]
     return "\n".join(clean_lines)
 
-
-
-#main code
-#ask for a pdf, and print the content out neatly
-
-if __name__ == "__main__":
-    st.title("Resume Parser")
-    st.write("Submit your resume pdf/docx file here")
-    
-    pdf = st.file_uploader("Upload your resume", type=["pdf", "docx"])  
-
-    if pdf is not None:
-        st.success("Resume Uploaded")
-        content = get_clean_resume_text(pdf)
-        st.subheader("Resume Content")
-        st.text_area("Content", content, height=500)
-    
     

@@ -1,0 +1,74 @@
+{
+  "candidate_profile": {
+    "personal_information": {
+      "first_name": "John",
+      "last_name": "Doe",
+      "email": "johndoe@email.com",
+      "phone_number": "+91-1234567890",
+      "location": "Bangalore,Karnataka,India",
+      "linkedin_url": "https://linkedin.com/in/johndoe",
+      "github_url": "https://github.com/johndoe",
+      "portfolio_url": null
+    },
+    "Professional_summary": "HighlymotivatedsoftwareengineeringinternwithexperienceinPythonanddatapipelines...",
+    "skills": {
+      "programming_languages": [
+        "Python",
+        "JavaScript",
+        "SQL"
+      ],
+      "frameworks_and_tools": [
+        "Git",
+        "Docker",
+        "React",
+        "RestAPI"
+      ],
+      "soft_skills": [
+        "TechnicalWriting",
+        "AgileMethodology"
+      ]
+    },
+    "work_experience": [
+      {
+        "company_name": "AITechCorp",
+        "job_title": "SoftwareEngineeringIntern",
+        "location": "Remote",
+        "start_date": "2025-06",
+        "end_date": "Present",
+        "is_current": true,
+        "responsibilities": [
+          "DevelopedaresumeparserutilityusingPythonandLLMs.",
+          "Reducedmanualdataentrytimeby40%."
+        ]
+      }
+    ],
+    "education": [
+      {
+        "institution_name": "UniversityofTechnology&Science",
+        "degree": "BachelorofScience",
+        "major": "ComputerScience",
+        "start_date": "2024-09",
+        "end_date": "2028-05",
+        "gpa": "8.9"
+      }
+    ],
+    "certifications": [
+      {
+        "name": "AWSCertifiedCloudPractitioner",
+        "issuing_organization": "AmazonWebServices",
+        "issue_date": "2024-11"
+      }
+    ],
+    "projects": [
+      {
+        "project_name": "AutomatedDeploymentScript",
+        "description": "AbashscripttoautomateDockercontainerdeployment.",
+        "technologies_used": [
+          "Bash",
+          "Docker",
+          "Linux"
+        ]
+      }
+    ]
+  }
+}
