@@ -3,10 +3,10 @@ import json
 import os
 from schema import ResumeParserResponse
 
-# ── Step A: Derive the exact JSON Schema from Pydantic (snake_case guaranteed) ──
+# ── Deriving the exact JSON Schema from Pydantic (snake_case guaranteed) ──
 PYDANTIC_SCHEMA = ResumeParserResponse.model_json_schema()
 
-# ── Step B: Load the human-readable example template for the prompt ──
+# ── Load the human-readable example template for the prompt ──
 current_dir = os.path.dirname(os.path.abspath(__file__))
 schema_path = os.path.join(current_dir, "JSON_Scheme.json")
 
@@ -16,7 +16,7 @@ try:
 except Exception:
     example_template = json.dumps({"candidate_profile": {}}, indent=2)
 
-# ── Step C: Build the system prompt with explicit field names ──
+# ── Build the system prompt with explicit field names ──
 SYSTEM_PROMPT = f"""You are a precise, deterministic AI data extraction engine.
 Your ONLY task is to extract candidate information from an unstructured resume into
 a strictly structured JSON object.
