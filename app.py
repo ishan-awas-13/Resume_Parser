@@ -31,7 +31,7 @@ if uploaded_file is not None:
             profile_data = parsed_profile.candidate_profile
 
             st.balloons()
-            st.subheader("📊 Step 5: Exracted Candidate Insights Report")
+            st.subheader("📊 Exracted Candidate Insights Report")
 
             col1, col2 = st.columns([1, 2])
 

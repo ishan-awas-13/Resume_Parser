@@ -1,5 +1,1 @@
 streamlit
-pypdf
-python-docx
-pydantic
-ollama
