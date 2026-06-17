@@ -12,9 +12,21 @@
     },
     "professional_summary": "Highly motivated software engineering intern with experience in Python and data pipelines...",
     "skills": {
-      "programming_languages": ["Python", "JavaScript", "SQL"],
-      "frameworks_and_tools": ["Git", "Docker", "React", "REST API"],
-      "soft_skills": ["Technical Writing", "Agile Methodology"]
+      "programming_languages": [
+        "Python",
+        "JavaScript",
+        "SQL"
+      ],
+      "frameworks_and_tools": [
+        "Git",
+        "Docker",
+        "React",
+        "REST API"
+      ],
+      "soft_skills": [
+        "Technical Writing",
+        "Agile Methodology"
+      ]
     },
     "work_experience": [
       {
@@ -51,7 +63,11 @@
       {
         "project_name": "Automated Deployment Script",
         "description": "A bash script to automate Docker container deployment.",
-        "technologies_used": ["Bash", "Docker", "Linux"]
+        "technologies_used": [
+          "Bash",
+          "Docker",
+          "Linux"
+        ]
       }
     ]
   }

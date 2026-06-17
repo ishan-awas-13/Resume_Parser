@@ -1,4 +1,6 @@
 import ollama
+import gradio as gr
+
 def check_local_model():
     print("Sending a test request to Mistral:7B")
     try:
