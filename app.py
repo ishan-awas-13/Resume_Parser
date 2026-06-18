@@ -37,9 +37,23 @@ st.markdown("""
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+#  SESSION STATE — Persists JSON outputs across tab switches
+# ══════════════════════════════════════════════════════════════════════════════
+if "bench_json_store" not in st.session_state:
+    # Will hold: { model_name: json_dict, ... } after a benchmark run
+    st.session_state.bench_json_store = {}
+if "bench_run_complete" not in st.session_state:
+    st.session_state.bench_run_complete = False
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 #  TABS
 # ══════════════════════════════════════════════════════════════════════════════
-tab_parser, tab_bench = st.tabs(["📄 Resume Parser", "🔬 Benchmarking"])
+tab_parser, tab_bench, tab_json = st.tabs([
+    "📄 Resume Parser",
+    "🔬 Benchmarking",
+    "🗂️ Benchmarked JSON Data"
+])
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -258,6 +272,13 @@ with tab_bench:
             reference_profile = ref_result_container["data"].candidate_profile
             st.success(f"✅ Reference model ({ref_model}) completed in **{ref_latency:.2f}s**.")
 
+            # Save reference JSON to session state
+            st.session_state.bench_json_store = {}  # clear previous run
+            st.session_state.bench_json_store[f"[REFERENCE] {ref_model}"] = (
+                ref_result_container["data"].model_dump()
+            )
+            st.session_state.bench_run_complete = False  # reset until all tests done
+
             # ── Step 3: Test Model Runs (Sequential) ───────────────────────────
             all_results = []   # list of dicts from compute_accuracy()
 
@@ -299,6 +320,14 @@ with tab_bench:
                 )
                 all_results.append(result)
                 st.success(f"✅ {test_model} scored **{result['overall_score']*100:.1f}%** overall in {test_latency:.2f}s.")
+
+                # Save this test model's JSON to session state
+                st.session_state.bench_json_store[test_model] = (
+                    test_result_container["data"].model_dump()
+                )
+
+            # Mark run as complete so the third tab unlocks
+            st.session_state.bench_run_complete = True
 
             # ── Results Display ────────────────────────────────────────────────
             if all_results:
@@ -343,3 +372,44 @@ with tab_bench:
                             {"Score": {k: round(v * 100, 1) for k, v in r["field_scores"].items()}}
                         )
                         st.dataframe(field_df, width='stretch')
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+#  TAB 3 — BENCHMARKED JSON DATA
+# ══════════════════════════════════════════════════════════════════════════════
+with tab_json:
+    st.subheader("🗂️ Benchmarked JSON Data")
+    st.caption("Raw JSON outputs extracted by each model in the most recent benchmark run. This data resets when a new benchmark is started.")
+    st.divider()
+
+    if not st.session_state.bench_run_complete:
+        # ── Placeholder when no benchmark has been run yet ─────────────────────
+        st.markdown("""
+            <div style="
+                text-align: center;
+                padding: 60px 20px;
+                color: #666;
+                border: 2px dashed #444;
+                border-radius: 12px;
+                margin-top: 20px;
+            ">
+                <h3 style="color: #555; margin-bottom: 10px;">No Benchmark Data Yet</h3>
+                <p style="font-size: 0.95rem;">
+                    Run a benchmark from the <strong>🔬 Benchmarking</strong> tab first.<br>
+                    The JSON outputs from each selected model for benchmarking will appear here once the run is complete.
+                </p>
+            </div>
+        """, unsafe_allow_html=True)
+    else:
+        # ── Show per-model JSON outputs ────────────────────────────────────────
+        import json
+        json_store = st.session_state.bench_json_store
+
+        for model_label, json_data in json_store.items():
+            is_ref = model_label.startswith("[REFERENCE]")
+            icon   = "🏆" if is_ref else "🧪"
+            with st.expander(f"{icon} {model_label}", expanded=is_ref):
+                st.code(
+                    json.dumps(json_data, indent=2),
+                    language="json"
+                )
