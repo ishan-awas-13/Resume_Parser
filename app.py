@@ -6,7 +6,7 @@ import time
 import threading # <-- Essential addition for creating parallel execution lanes
 
 st.set_page_config(page_title="AI Resume Parser", layout="wide")
-st.title("AI Resume Parser (Phase 1)")
+st.title("AI Resume Parser (Benchmarking Edition)")
 
 # ── Shared Model Dictionary ───────────────────────────────────────────────────
 MODEL_DICT = {
@@ -325,7 +325,7 @@ with tab_bench:
                     summary_rows.append(row)
 
                 df = pd.DataFrame(summary_rows).set_index("Model")
-                st.dataframe(df, use_container_width=True)
+                st.dataframe(df, width='stretch')
 
                 # ── Bar Chart — Overall Score ──────────────────────────────────
                 st.markdown("#### Overall Accuracy Score by Model")
@@ -342,4 +342,4 @@ with tab_bench:
                         field_df = pd.DataFrame(
                             {"Score": {k: round(v * 100, 1) for k, v in r["field_scores"].items()}}
                         )
-                        st.dataframe(field_df, use_container_width=True)
+                        st.dataframe(field_df, width='stretch')
