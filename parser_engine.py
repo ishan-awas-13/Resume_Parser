@@ -34,13 +34,13 @@ a strictly structured JSON object.
 7. Do NOT add any fields not present in the schema above.
 """
 
-def parse_resume_text(raw_text: str) -> ResumeParserResponse:
+def parse_resume_text(model_name: str, raw_text: str) -> ResumeParserResponse:
     """
     Extract structured data from raw resume text via Ollama/Mistral-7B.
     Uses Pydantic JSON Schema as the Ollama `format` argument to enforce output structure.
     """
     response = ollama.chat(
-        model="mistral:7b",
+        model=model_name,
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": f"Extract the following resume:\n\n{raw_text}"}
