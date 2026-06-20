@@ -4,6 +4,7 @@ from parser_engine import parse_resume_text
 import time
 import threading
 import json
+from scorer import *
 
 st.set_page_config(page_title="AI Resume Parser — Phase 2", layout="wide")
 st.title("AI Resume Parser (Phase 2 — Batch Mode)")
@@ -59,15 +60,24 @@ st.markdown("""
 ctrl_col1, ctrl_col2 = st.columns([2, 1])
 
 with ctrl_col1:
-    uploaded_files = st.file_uploader(
-        "📂 Upload Resume Files:",
-        type=["pdf", "docx"],
-        accept_multiple_files=True,
-        key="batch_uploader",
-        help="Select one or more PDF / DOCX resume files to process."
+    #JD Input
+    st.subheader("📝 Job Description")
+    job_description = st.text_area(
+        "Enter the job description here:",
+        key="job_description",
+        height=150,
+        placeholder="Paste the job description here..."
+    )
+    st.write("")
+
+    tag_words = st.text_input(
+        "Enter the tag words here:",
+        key="tag_words",
+        placeholder="Enter the tag words here..."
     )
 
-with ctrl_col2:
+    st.divider()
+
     model_label = st.selectbox(
         "🤖 Select Local Model:",
         options=list(MODEL_DICT.keys()),
@@ -77,6 +87,19 @@ with ctrl_col2:
     current_model = MODEL_DICT[model_label]
     st.caption(f"Running on: `{current_model}`")
 
+    
+
+with ctrl_col2:
+    uploaded_files = st.file_uploader(
+        "📂 Upload Resume Files:",
+        type=["pdf", "docx"],
+        accept_multiple_files=True,
+        key="batch_uploader",
+        help="Select one or more PDF / DOCX resume files to process."
+    )
+
+
+    
 run_btn = st.button(
     "▶️ Parse All Resumes",
     type="primary",

@@ -1,0 +1,15 @@
+[theme]
+# Terracotta/rust accent color for selected states and active widgets
+primaryColor = "#C75D3F"
+
+# White background for the main content area
+backgroundColor = "#ede6c8ff"
+
+# Warm cream/sand background for the sidebar and input cards
+secondaryBackgroundColor = "#c6c8a5ff"
+
+# Dark charcoal/slate text color
+textColor = "#31333F"
+
+# Modern sans-serif font
+font = "Segoe UI Emoji"
