@@ -4,7 +4,7 @@ from parser_engine import parse_resume_text
 import time
 import threading
 import json
-from scorer import *
+from scorer import score_candidate_suitability
 
 st.set_page_config(page_title="AI Resume Parser — Phase 2", layout="wide")
 st.title("AI Resume Parser (Phase 2 — Batch Mode)")
@@ -69,11 +69,11 @@ with ctrl_col1:
         placeholder="Paste the job description here..."
     )
     st.write("")
-
-    tag_words = st.text_input(
-        "Enter the tag words here:",
-        key="tag_words",
-        placeholder="Enter the tag words here..."
+        
+    key_skills = st.text_input(
+        "Enter the key skills here:",
+        key="key_skills",
+        placeholder="Enter the key skills here..."
     )
 
     st.divider()
@@ -208,9 +208,10 @@ if run_btn and uploaded_files:
 # ══════════════════════════════════════════════════════════════════════════════
 st.divider()
 
-tab_results, tab_json = st.tabs([
+tab_results, tab_json, tab_scored = st.tabs([
     "📊 Parsed Resumes",
-    "🗂️ Parsed Resume JSON"
+    "🗂️ Parsed Resume JSON",
+    "💯 Scores and Evaluations"
 ])
 
 
@@ -345,3 +346,101 @@ with tab_json:
                     st.error(f"Parse error: {entry['error']}")
                 else:
                     st.code(json.dumps(entry["json_data"], indent=2), language="json")
+
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# TAB 3 - CANDIATED SCORES AND EVALUATION
+# ══════════════════════════════════════════════════════════════════════════════
+
+
+with tab_scored:
+    if not st.session_state.parsed_resumes:
+        st.markdown("""
+            <div style="text-align:center; padding:60px 20px; color:#666;
+                        border:2px dashed #444; border-radius:12px; margin-top:20px;">
+                <h3 style="color:#555; margin-bottom:10px;">No Resumes Parsed Yet</h3>
+                <p style="font-size:0.95rem;">
+                    Upload and parse resumes in the first tab before scoring.
+                </p>
+            </div>
+        """, unsafe_allow_html=True)
+    else:
+        st.subheader("💯 Score & Evaluate Candidates")
+        st.caption("Calculate candidate fit scores based on the provided Job Description and Key Skills.")
+
+        # 1. Scoring trigger button
+        if st.button("▶️ Score All Candidates", type="primary"):
+            # Safe parsing of comma-separated key skills
+            skills_list = [s.strip() for s in key_skills.split(",") if s.strip()]
+            
+            progress_bar = st.progress(0.0)
+            status_text = st.empty()
+            
+            valid_candidates = [r for r in st.session_state.parsed_resumes if r["error"] is None]
+            total_valid = len(valid_candidates)
+            
+            for idx, entry in enumerate(valid_candidates):
+                status_text.info(f"Evaluating {entry['filename']} ({idx+1}/{total_valid})...")
+                try:
+                    scores = score_candidate_suitability(
+                        model_name=current_model,
+                        job_description=job_description,
+                        key_skills=skills_list,
+                        resume_json=entry["json_data"]
+                    )
+                    entry["scores"] = scores
+                except Exception as e:
+                    st.error(f"Failed to score {entry['filename']}: {e}")
+                progress_bar.progress((idx + 1) / total_valid)
+            
+            status_text.success("Scoring completed successfully!")
+            time.sleep(1)
+            status_text.empty()
+            progress_bar.empty()
+
+        st.divider()
+
+        # 2. Render evaluation results
+        for entry in st.session_state.parsed_resumes:
+            st.markdown(
+                f'<div class="resume-header">'
+                f'<h3>📄 {entry["filename"]}</h3>'
+                f'</div>',
+                unsafe_allow_html=True
+            )
+
+            if entry["error"]:
+                st.error(f"Cannot evaluate: Resume parsing failed with error: {entry['error']}")
+            elif "scores" not in entry or entry["scores"] is None:
+                st.info("No score available yet. Click 'Score All Candidates' above to generate scores.")
+            else:
+                scores = entry["scores"]
+                
+                # Overall Score Gauge
+                overall = int(scores.get("overall_score", 0))
+                st.metric("Overall Match Score", f"{overall}%")
+                st.progress(overall / 100.0)
+
+                # Breakdown Metrics
+                st.write("")
+                st.markdown("#### 📊 Evaluation Breakdown")
+                
+                col1, col2, col3, col4, col5 = st.columns(5)
+                with col1:
+                    st.metric("Skills Match", f"{scores.get('skills_match', 0)}%")
+                with col2:
+                    st.metric("Role Relevance", f"{scores.get('role_relevance', 0)}%")
+                with col3:
+                    st.metric("Experience Match", f"{scores.get('experience_match', 0)}%")
+                with col4:
+                    st.metric("Education Match", f"{scores.get('education_match', 0)}%")
+                with col5:
+                    st.metric("Project Match", f"{scores.get('project_match', 0)}%")
+
+                # Rationale summary
+                st.write("")
+                st.markdown("#### 📝 Evaluation Summary")
+                st.info(scores.get("summary", "No evaluation summary returned by the model."))
+            
+            st.divider()
