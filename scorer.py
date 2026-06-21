@@ -13,7 +13,6 @@ Your job is to evaluate how suitable the candidate is for the job role.
 
 You wll return ONLY a JSON format output in this following format:
 {
-    "overall_score": 1-100,
     "skills_match": 1-100,
     "role_relevance": 1-100,
     "experience_match": 1-100,
